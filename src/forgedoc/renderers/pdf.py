@@ -133,10 +133,10 @@ def _render_section(
         flowables.append(Paragraph(section.title, styles[style_key]))
 
     if section.content:
-        for para in section.content.split("\n\n"):
-            para = para.strip()
-            if para:
-                flowables.append(Paragraph(para, styles["body"]))
+        from ..markdown import md_to_reportlab
+
+        for para_xml in md_to_reportlab(section.content):
+            flowables.append(Paragraph(para_xml, styles["body"]))
 
     for table_def in section.tables:
         _render_table(table_def, flowables, styles, config)

@@ -49,10 +49,9 @@ def _render_section_html(section) -> str:
         parts.append(f"<{tag}>{escape(section.title)}</{tag}>")
 
     if section.content:
-        for para in section.content.split("\n\n"):
-            para = para.strip()
-            if para:
-                parts.append(f"<p>{escape(para)}</p>")
+        from ..markdown import md_to_html
+
+        parts.append(md_to_html(section.content))
 
     for table_def in section.tables:
         parts.append("<table>")

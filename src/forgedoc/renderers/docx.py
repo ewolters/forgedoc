@@ -129,18 +129,88 @@ def _render_section_docx(docx, section: Section, primary_rgb, accent_rgb):
             run.font.color.rgb = RGBColor(*color)
 
     if section.content:
-        for para_text in section.content.split("\n\n"):
-            para_text = para_text.strip()
-            if para_text:
-                p = docx.add_paragraph()
-                run = p.add_run(para_text)
-                run.font.size = Pt(9)
+        _render_markdown_docx(docx, section.content)
 
     for table_def in section.tables:
         _render_table_docx(docx, table_def)
 
     for sub in section.subsections:
         _render_section_docx(docx, sub, primary_rgb, accent_rgb)
+
+
+def _render_markdown_docx(docx, content: str):
+    """Render markdown content as DOCX paragraphs with inline formatting."""
+    import re as _re
+
+    from docx.shared import Pt
+
+    for block in _re.split(r"\n{2,}", content.strip()):
+        lines = block.strip().split("\n")
+        if not lines or not lines[0].strip():
+            continue
+
+        # Bullet list
+        if all(_re.match(r"^[\-\*]\s+", l.strip()) for l in lines if l.strip()):
+            for line in lines:
+                text = _re.sub(r"^[\-\*]\s+", "", line.strip())
+                p = docx.add_paragraph(style="List Bullet")
+                _add_md_runs(p, text, Pt(9))
+            continue
+
+        # Numbered list
+        if all(_re.match(r"^\d+\.\s+", l.strip()) for l in lines if l.strip()):
+            for line in lines:
+                text = _re.sub(r"^\d+\.\s+", "", line.strip())
+                p = docx.add_paragraph(style="List Number")
+                _add_md_runs(p, text, Pt(9))
+            continue
+
+        # Regular paragraph
+        joined = " ".join(l.strip() for l in lines if l.strip())
+        p = docx.add_paragraph()
+        _add_md_runs(p, joined, Pt(9))
+
+
+def _add_md_runs(paragraph, text: str, font_size):
+    """Add runs to a paragraph with bold/italic/code formatting."""
+    import re as _re
+
+    from docx.shared import Pt, RGBColor
+
+    # Split on markdown patterns, keeping delimiters
+    # Pattern matches: **bold**, *italic*, `code`, [text](url)
+    parts = _re.split(r"(\*\*.*?\*\*|\*.*?\*|`.*?`|\[.*?\]\(.*?\))", text)
+
+    for part in parts:
+        if not part:
+            continue
+
+        if part.startswith("**") and part.endswith("**"):
+            run = paragraph.add_run(part[2:-2])
+            run.bold = True
+            run.font.size = font_size
+        elif part.startswith("*") and part.endswith("*"):
+            run = paragraph.add_run(part[1:-1])
+            run.italic = True
+            run.font.size = font_size
+        elif part.startswith("`") and part.endswith("`"):
+            run = paragraph.add_run(part[1:-1])
+            run.font.name = "Courier New"
+            run.font.size = Pt(8)
+            run.font.color.rgb = RGBColor(80, 80, 80)
+        elif part.startswith("["):
+            match = _re.match(r"\[(.+?)\]\((.+?)\)", part)
+            if match:
+                run = paragraph.add_run(match.group(1))
+                run.font.size = font_size
+                run.underline = True
+                run.font.color.rgb = RGBColor(0, 0, 180)
+            else:
+                run = paragraph.add_run(part)
+                run.font.size = font_size
+        else:
+            run = paragraph.add_run(part)
+            run.font.size = font_size
 
 
 def _render_table_docx(docx, table_def: TableDef):
