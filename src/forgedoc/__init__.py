@@ -16,6 +16,6 @@ QMS-specific builders:
 
 __version__ = "0.1.0"
 
-from .core import Document, render
+from .core import Branding, Document, render
 
-__all__ = ["Document", "render", "__version__"]
+__all__ = ["Branding", "Document", "render", "__version__"]
