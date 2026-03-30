@@ -77,7 +77,8 @@ def _render_section_html(section) -> str:
 _HTML_HEAD = """<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>{title}</title>
 <style>
-body {{ font-family: -apple-system, sans-serif; max-width: 800px; margin: 2em auto; color: #1a1a1a; font-size: 14px; line-height: 1.5; }}
+body {{ font-family: -apple-system, sans-serif; max-width: 800px;
+  margin: 2em auto; color: #1a1a1a; font-size: 14px; line-height: 1.5; }}
 h1 {{ color: #1a1a2e; border-bottom: 2px solid #1a1a2e; padding-bottom: 0.3em; }}
 h2 {{ color: #16213e; margin-top: 1.5em; }}
 h3 {{ color: #16213e; }}

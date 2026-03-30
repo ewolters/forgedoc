@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from ..core import Document, Section, TableDef
+from ..core import Document, TableDef
 
 
 @dataclass

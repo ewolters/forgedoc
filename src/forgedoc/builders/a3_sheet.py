@@ -30,8 +30,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..core import Document, PageConfig, Section
-
+from ..core import Document, PageConfig
 
 A3_SECTIONS = [
     ("background", "1. Background"),
@@ -69,7 +68,7 @@ class A3Sheet:
         """Convert to a ForgeDoc Document for rendering."""
         doc = Document(
             title=self.title,
-            subtitle=f"A3 Problem Solving Report",
+            subtitle="A3 Problem Solving Report",
             doc_type="a3",
             page_config=PageConfig(size="A3-landscape"),
             metadata={

@@ -9,12 +9,11 @@ from __future__ import annotations
 from io import BytesIO
 from typing import TYPE_CHECKING
 
-from reportlab.lib.pagesizes import A3, A4, letter, landscape
+from reportlab.lib.pagesizes import A3, A4, landscape, letter
 from reportlab.lib.units import inch
 from reportlab.platypus import (
     Image,
     KeepTogether,
-    PageBreak,
     Paragraph,
     SimpleDocTemplate,
     Spacer,

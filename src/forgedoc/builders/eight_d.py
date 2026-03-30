@@ -27,8 +27,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..core import Document, Section
-
+from ..core import Document
 
 D8_SECTIONS = [
     ("d1_team", "D1: Team"),

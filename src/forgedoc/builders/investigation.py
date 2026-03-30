@@ -15,7 +15,10 @@ Usage:
     report.add_scope("CNC machining center → surface finish → dimensional tolerance")
     report.add_evidence("DOE: Coolant viscosity vs surface finish", effect_size=0.34, p_value=0.002)
     report.add_root_cause("Coolant viscosity degrades after 4hr continuous run")
-    report.add_corrective_action("Install inline viscosity monitoring", responsible="Maintenance", due="2026-04-15")
+    report.add_corrective_action(
+        "Install inline viscosity monitoring",
+        responsible="Maintenance", due="2026-04-15",
+    )
     report.add_verification("Process confirmation: 30-day monitoring shows Cpk = 1.45")
 
     doc = report.to_document()
@@ -25,9 +28,8 @@ Usage:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
 
-from ..core import Document, Section, TableDef
+from ..core import Document, TableDef
 
 
 @dataclass
@@ -182,7 +184,10 @@ class InvestigationReport:
             sec = doc.add_section("4. Corrective Action")
             sec.tables.append(TableDef(
                 headers=["Action", "Responsible", "Due", "Status"],
-                rows=[[a.description, a.responsible, a.due, a.status] for a in self.corrective_actions],
+                rows=[
+                    [a.description, a.responsible, a.due, a.status]
+                    for a in self.corrective_actions
+                ],
             ))
         else:
             doc.add_section("4. Corrective Action", "Pending root cause analysis")
@@ -198,7 +203,8 @@ class InvestigationReport:
                     [
                         e.description,
                         e.source_type,
-                        f"ES={e.effect_size:.2f}, p={e.p_value:.3f}" if e.effect_size else e.confidence,
+                        f"ES={e.effect_size:.2f}, p={e.p_value:.3f}"
+                        if e.effect_size else e.confidence,
                     ]
                     for e in self.evidence
                 ],

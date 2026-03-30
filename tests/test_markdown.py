@@ -1,7 +1,7 @@
 """Tests for markdown parsing and rendering across all formats."""
 
 from forgedoc import Document, render
-from forgedoc.markdown import md_to_reportlab, md_to_html, md_to_plain
+from forgedoc.markdown import md_to_html, md_to_plain, md_to_reportlab
 
 
 class TestMarkdownToReportlab:
@@ -43,6 +43,18 @@ class TestMarkdownToReportlab:
     def test_empty_input(self):
         assert md_to_reportlab("") == []
         assert md_to_reportlab(None) == []
+
+    def test_bold_italic_combined(self):
+        """Triple asterisks must produce properly nested XML."""
+        result = md_to_reportlab("This is ***bold and italic*** text.")
+        assert "<b><i>bold and italic</i></b>" in result[0]
+
+    def test_bold_italic_pdf_renders(self):
+        """Regression: triple asterisks used to crash PDF with mismatched tags."""
+        doc = Document(title="Test")
+        doc.add_section("Section", "***bold and italic*** and **just bold** and *just italic*")
+        pdf = render(doc, format="pdf")
+        assert pdf[:5] == b"%PDF-"
 
     def test_mixed_formatting(self):
         text = "This has **bold** and *italic* and `code` in one line."
@@ -107,7 +119,10 @@ class TestMarkdownToPlain:
 class TestMarkdownInRenderers:
     def test_pdf_renders_markdown(self):
         doc = Document(title="MD Test")
-        doc.add_section("Section", "This has **bold** and *italic* and `code`.\n\n- Bullet one\n- Bullet two")
+        doc.add_section(
+            "Section",
+            "This has **bold** and *italic* and `code`.\n\n- Bullet one\n- Bullet two",
+        )
         result = render(doc, format="pdf")
         assert result[:5] == b"%PDF-"
 

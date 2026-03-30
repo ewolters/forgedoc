@@ -1,7 +1,7 @@
 """Tests for style configuration and multi-page rendering."""
 
 from forgedoc import Document, render
-from forgedoc.core import Branding, TableDef
+from forgedoc.core import TableDef
 from forgedoc.styles.default import StyleConfig, get_styles, get_table_style
 
 

@@ -1,10 +1,10 @@
 """Tests for extended QMS builders: 8D, DOE run cards, supplier claim, knowledge health."""
 
 from forgedoc import render
-from forgedoc.builders.eight_d import EightDReport
 from forgedoc.builders.doe_run_cards import DOERunCards
-from forgedoc.builders.supplier_claim import SupplierClaimReport, CoAMeasurement
+from forgedoc.builders.eight_d import EightDReport
 from forgedoc.builders.knowledge_health import KnowledgeHealthReport
+from forgedoc.builders.supplier_claim import CoAMeasurement, SupplierClaimReport
 
 
 class TestEightDReport:
@@ -123,14 +123,15 @@ class TestSupplierClaimReport:
         claim.verification = "Next 3 lots: Cpk = 1.45."
         claim.disposition = "Return to supplier for rework."
 
-        doc = claim.to_document()
+        claim.to_document()
         assert len(claim.measurements) == 2
 
     def test_claim_all_formats(self):
         claim = SupplierClaimReport(title="Test Claim", supplier="Test Supplier")
         claim.description = "Test problem."
         claim.add_measurement(CoAMeasurement(
-            parameter="Width", nominal=10.0, tolerance=0.1, measured=10.15, unit="mm", result="FAIL",
+            parameter="Width", nominal=10.0, tolerance=0.1,
+            measured=10.15, unit="mm", result="FAIL",
         ))
         doc = claim.to_document()
 
@@ -166,7 +167,7 @@ class TestKnowledgeHealthReport:
         report.add_gap("CNC Line 3: coolant → surface finish (no evidence)")
         report.add_recommendation("Prioritize DOE on coolant parameters")
 
-        doc = report.to_document()
+        report.to_document()
         assert len(report.maturity_levels) == 4
         assert len(report.gaps) == 1
 

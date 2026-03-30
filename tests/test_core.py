@@ -1,8 +1,9 @@
 """Tests for ForgeDoc core functionality."""
 
 import pytest
+
 from forgedoc import Document, render
-from forgedoc.core import Branding, PageConfig, Section, TableDef
+from forgedoc.core import Branding, PageConfig
 
 
 class TestDocument:

@@ -2,8 +2,8 @@
 
 from forgedoc import render
 from forgedoc.builders.a3_sheet import A3Sheet
+from forgedoc.builders.control_plan import ControlItem, ControlPlanDoc
 from forgedoc.builders.investigation import InvestigationReport
-from forgedoc.builders.control_plan import ControlPlanDoc, ControlItem
 
 
 class TestA3Sheet:
@@ -47,7 +47,10 @@ class TestInvestigationReport:
         report.add_scope("CNC machining → surface finish")
         report.add_evidence("DOE: viscosity vs finish", effect_size=0.34, p_value=0.002)
         report.add_root_cause("Coolant degrades after 4hr")
-        report.add_corrective_action("Install monitoring", responsible="Maintenance", due="2026-04-15")
+        report.add_corrective_action(
+            "Install monitoring",
+            responsible="Maintenance", due="2026-04-15",
+        )
         report.verification = "30-day Cpk = 1.45"
 
         doc = report.to_document()

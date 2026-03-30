@@ -33,8 +33,6 @@ def md_to_reportlab(text: str) -> list[str]:
         return []
 
     paragraphs = []
-    current_list = []
-    list_type = None  # "bullet" or "numbered"
 
     for block in re.split(r"\n{2,}", text.strip()):
         lines = block.strip().split("\n")
@@ -102,8 +100,8 @@ def md_to_html(text: str) -> str:
         lines = block.strip().split("\n")
 
         # Check if list
-        is_bullet = all(re.match(r"^[\-\*]\s+", l.strip()) for l in lines if l.strip())
-        is_numbered = all(re.match(r"^\d+\.\s+", l.strip()) for l in lines if l.strip())
+        is_bullet = all(re.match(r"^[\-\*]\s+", ln.strip()) for ln in lines if ln.strip())
+        is_numbered = all(re.match(r"^\d+\.\s+", ln.strip()) for ln in lines if ln.strip())
 
         if is_bullet:
             items = []
@@ -118,7 +116,7 @@ def md_to_html(text: str) -> str:
                 items.append(f"<li>{_inline_html(item)}</li>")
             html_parts.append("<ol>" + "".join(items) + "</ol>")
         else:
-            joined = " ".join(l.strip() for l in lines if l.strip())
+            joined = " ".join(ln.strip() for ln in lines if ln.strip())
             if joined:
                 html_parts.append(f"<p>{_inline_html(joined)}</p>")
 
@@ -127,6 +125,8 @@ def md_to_html(text: str) -> str:
 
 def _inline_markup(text: str) -> str:
     """Apply inline markdown → ReportLab XML."""
+    # Bold+italic: ***text*** → <b><i>text</i></b> (must come before ** and *)
+    text = re.sub(r"\*\*\*(.+?)\*\*\*", r"<b><i>\1</i></b>", text)
     # Bold: **text** → <b>text</b>
     text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
     # Italic: *text* → <i>text</i>
@@ -143,6 +143,8 @@ def _inline_html(text: str) -> str:
     from html import escape
 
     text = escape(text)
+    # Bold+italic (must come before ** and *)
+    text = re.sub(r"\*\*\*(.+?)\*\*\*", r"<strong><em>\1</em></strong>", text)
     # Bold
     text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
     # Italic

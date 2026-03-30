@@ -17,7 +17,6 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..core import Document, Section, TableDef
-    from ..styles.default import StyleConfig
 
 
 def render_docx(doc: Document, style=None, **kwargs) -> bytes:
@@ -27,8 +26,7 @@ def render_docx(doc: Document, style=None, **kwargs) -> bytes:
         from docx.enum.section import WD_ORIENT
         from docx.enum.table import WD_TABLE_ALIGNMENT
         from docx.enum.text import WD_ALIGN_PARAGRAPH
-        from docx.oxml.ns import qn
-        from docx.shared import Cm, Inches, Pt, RGBColor
+        from docx.shared import Pt, RGBColor
     except ImportError:
         raise ImportError(
             "python-docx is required for DOCX output. "
@@ -119,7 +117,7 @@ def render_docx(doc: Document, style=None, **kwargs) -> bytes:
 
 def _render_section_docx(docx, section: Section, primary_rgb, accent_rgb):
     """Render a section into the DOCX document."""
-    from docx.shared import Pt, RGBColor
+    from docx.shared import RGBColor
 
     if section.title:
         level = min(section.level, 4)
@@ -150,7 +148,7 @@ def _render_markdown_docx(docx, content: str):
             continue
 
         # Bullet list
-        if all(_re.match(r"^[\-\*]\s+", l.strip()) for l in lines if l.strip()):
+        if all(_re.match(r"^[\-\*]\s+", ln.strip()) for ln in lines if ln.strip()):
             for line in lines:
                 text = _re.sub(r"^[\-\*]\s+", "", line.strip())
                 p = docx.add_paragraph(style="List Bullet")
@@ -158,7 +156,7 @@ def _render_markdown_docx(docx, content: str):
             continue
 
         # Numbered list
-        if all(_re.match(r"^\d+\.\s+", l.strip()) for l in lines if l.strip()):
+        if all(_re.match(r"^\d+\.\s+", ln.strip()) for ln in lines if ln.strip()):
             for line in lines:
                 text = _re.sub(r"^\d+\.\s+", "", line.strip())
                 p = docx.add_paragraph(style="List Number")
@@ -166,7 +164,7 @@ def _render_markdown_docx(docx, content: str):
             continue
 
         # Regular paragraph
-        joined = " ".join(l.strip() for l in lines if l.strip())
+        joined = " ".join(ln.strip() for ln in lines if ln.strip())
         p = docx.add_paragraph()
         _add_md_runs(p, joined, Pt(9))
 
